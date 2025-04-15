@@ -1,8 +1,8 @@
 import { Entity, Column, OneToOne } from "typeorm";
 import { BaseEntity } from "../../common/entities/base.entity";
 import { UserRole } from "../../common/enums/user-role.enum";
-import { ApiProperty } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
+import { instanceToPlain, Exclude } from "class-transformer";
 
 @Entity("users")
 export class User extends BaseEntity {
@@ -15,6 +15,7 @@ export class User extends BaseEntity {
   fullName: string;
 
   @Exclude()
+  @ApiHideProperty()
   @Column()
   password: string;
 
@@ -33,4 +34,8 @@ export class User extends BaseEntity {
   @ApiProperty({ required: false })
   @Column({ nullable: true })
   profileImage: string;
+
+  toJSON() {
+    return instanceToPlain(this);
+  }
 }

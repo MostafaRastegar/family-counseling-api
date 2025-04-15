@@ -1,0 +1,2593 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "summary": "Register a new user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "123e4567-e89b-12d3-a456-426614174000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "fullName": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "client"
+                        }
+                      }
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "email must be an email",
+                        "password must be longer than or equal to 6 characters"
+                      ]
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Bad Request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 409
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User with this email already exists"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Conflict"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "summary": "Log in existing user",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "123e4567-e89b-12d3-a456-426614174000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "fullName": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "client"
+                        }
+                      }
+                    },
+                    "accessToken": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "number",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Invalid credentials"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UsersController_findAll",
+        "summary": "Get all users (admin only)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "summary": "Get a user by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "summary": "Update a user",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "summary": "Delete a user (admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "users"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/consultants/{id}/availabilities": {
+      "get": {
+        "operationId": "ConsultantsController_findAllAvailabilities",
+        "summary": "Get all availabilities for a consultant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the consultant availabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Availability"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ]
+      }
+    },
+    "/consultants/availabilities/{id}": {
+      "get": {
+        "operationId": "ConsultantsController_findAvailabilityById",
+        "summary": "Get an availability by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Availability ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the availability",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Availability"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Availability not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ]
+      },
+      "patch": {
+        "operationId": "ConsultantsController_updateAvailability",
+        "summary": "Update an availability",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Availability ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvailabilityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Availability updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Availability"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Availability not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ConsultantsController_removeAvailability",
+        "summary": "Delete an availability",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Availability ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Availability deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Availability not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/consultants/availabilities": {
+      "post": {
+        "operationId": "ConsultantsController_createAvailability",
+        "summary": "Create a new availability",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAvailabilityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Availability created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Availability"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "Time slot overlaps with existing availability"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/consultants/{id}/available-slots": {
+      "get": {
+        "operationId": "ConsultantsController_getAvailableTimeSlots",
+        "summary": "Get available time slots for a consultant on a specific date",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": true,
+            "in": "query",
+            "description": "Date in YYYY-MM-DD format",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the available time slots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Availability"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ]
+      }
+    },
+    "/consultants": {
+      "get": {
+        "operationId": "ConsultantsController_findAll",
+        "summary": "Get all consultants with optional filtering",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "specialties",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "isVerified",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
+          },
+          {
+            "required": false,
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "required": false,
+            "name": "specialties",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "required": false,
+            "name": "isVerified",
+            "in": "query",
+            "schema": {
+              "default": true,
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of consultants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Consultant"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "consultants"
+        ]
+      },
+      "post": {
+        "operationId": "ConsultantsController_create",
+        "summary": "Create a new consultant profile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateConsultantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Consultant created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consultant"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "409": {
+            "description": "User is already a consultant"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/consultants/{id}": {
+      "get": {
+        "operationId": "ConsultantsController_findOne",
+        "summary": "Get a consultant by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the consultant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consultant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ]
+      },
+      "patch": {
+        "operationId": "ConsultantsController_update",
+        "summary": "Update a consultant profile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConsultantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultant updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consultant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ConsultantsController_remove",
+        "summary": "Delete a consultant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consultant deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/consultants/{id}/verify": {
+      "patch": {
+        "operationId": "ConsultantsController_verify",
+        "summary": "Verify a consultant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "isVerified": {
+                    "type": "boolean",
+                    "description": "Verification status",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultant verification updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consultant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "consultants"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/clients": {
+      "get": {
+        "operationId": "ClientsController_findAll",
+        "summary": "Get all clients (admin only)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all clients",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Client"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          }
+        },
+        "tags": [
+          "clients"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "ClientsController_create",
+        "summary": "Create a new client profile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Client created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "409": {
+            "description": "User is already a client"
+          }
+        },
+        "tags": [
+          "clients"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/clients/{id}": {
+      "get": {
+        "operationId": "ClientsController_findOne",
+        "summary": "Get a client by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Client ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client not found"
+          }
+        },
+        "tags": [
+          "clients"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "ClientsController_update",
+        "summary": "Update a client profile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Client ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Client updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Client"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "404": {
+            "description": "Client not found"
+          }
+        },
+        "tags": [
+          "clients"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ClientsController_remove",
+        "summary": "Delete a client (admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Client ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Client deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          },
+          "404": {
+            "description": "Client not found"
+          }
+        },
+        "tags": [
+          "clients"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/sessions": {
+      "get": {
+        "operationId": "SessionsController_findAll",
+        "summary": "Get all sessions (admin only)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all sessions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Session"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "SessionsController_create",
+        "summary": "Create a new session",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input or consultant not verified"
+          },
+          "404": {
+            "description": "Consultant or client not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/sessions/consultant/{consultantId}": {
+      "get": {
+        "operationId": "SessionsController_findByConsultant",
+        "summary": "Get sessions by consultant ID",
+        "parameters": [
+          {
+            "name": "consultantId",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns sessions for the specified consultant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Session"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/sessions/client/{clientId}": {
+      "get": {
+        "operationId": "SessionsController_findByClient",
+        "summary": "Get sessions by client ID",
+        "parameters": [
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "path",
+            "description": "Client ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns sessions for the specified client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Session"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Client not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/sessions/{id}": {
+      "get": {
+        "operationId": "SessionsController_findOne",
+        "summary": "Get a session by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Session ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "SessionsController_update",
+        "summary": "Update a session",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Session ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "SessionsController_remove",
+        "summary": "Delete a session (admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Session ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/sessions/{id}/status": {
+      "patch": {
+        "operationId": "SessionsController_updateStatus",
+        "summary": "Update session status",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Session ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending",
+                      "confirmed",
+                      "completed",
+                      "cancelled"
+                    ],
+                    "description": "New session status",
+                    "example": "confirmed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid status"
+          },
+          "404": {
+            "description": "Session not found"
+          }
+        },
+        "tags": [
+          "sessions"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/reviews": {
+      "get": {
+        "operationId": "ReviewsController_findAll",
+        "summary": "Get all reviews",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns all reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "ReviewsController_create",
+        "summary": "Create a new review",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input or session not completed"
+          },
+          "404": {
+            "description": "Consultant, client, or session not found"
+          },
+          "409": {
+            "description": "Session already has a review"
+          }
+        },
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/reviews/consultant/{consultantId}": {
+      "get": {
+        "operationId": "ReviewsController_findByConsultant",
+        "summary": "Get reviews by consultant ID",
+        "parameters": [
+          {
+            "name": "consultantId",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns reviews for the specified consultant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/reviews/{id}": {
+      "get": {
+        "operationId": "ReviewsController_findOne",
+        "summary": "Get a review by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Review ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the review",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found"
+          }
+        },
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "ReviewsController_remove",
+        "summary": "Delete a review (admin only)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Review ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          },
+          "404": {
+            "description": "Review not found"
+          }
+        },
+        "tags": [
+          "reviews"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/messaging/send": {
+      "post": {
+        "operationId": "MessagingController_sendMessage",
+        "summary": "Send a message to a client",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "example": "msg_12345678"
+                    },
+                    "error": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input"
+          },
+          "403": {
+            "description": "Forbidden - Requires consultant or admin role"
+          },
+          "404": {
+            "description": "Messenger type not found"
+          }
+        },
+        "tags": [
+          "messaging"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/admin/dashboard": {
+      "get": {
+        "operationId": "AdminController_getDashboardStats",
+        "summary": "Get dashboard statistics",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns dashboard statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardStatsDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          }
+        },
+        "tags": [
+          "admin"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/admin/consultants/pending": {
+      "get": {
+        "operationId": "AdminController_getPendingConsultants",
+        "summary": "Get list of pending consultants",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Returns consultants pending verification",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Consultant"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          }
+        },
+        "tags": [
+          "admin"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    },
+    "/admin/consultants/{id}/verify": {
+      "patch": {
+        "operationId": "AdminController_verifyConsultant",
+        "summary": "Verify or reject a consultant",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Consultant ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "isVerified"
+                ],
+                "properties": {
+                  "isVerified": {
+                    "type": "boolean",
+                    "description": "Verification status",
+                    "example": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultant verification status updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Consultant"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - Requires admin role"
+          },
+          "404": {
+            "description": "Consultant not found"
+          }
+        },
+        "tags": [
+          "admin"
+        ],
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "JWT-auth": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Family Counseling API",
+    "description": "\n      # Family Counseling API Documentation\n      \n      This API provides the backend services for the Family Counseling Platform.\n\n      ## Authorization\n      Most endpoints require JWT authentication. After logging in, include the JWT token in the Authorization header:\n      ```\n      Authorization: Bearer YOUR_JWT_TOKEN\n      ```\n      \n      ## Role-based access\n      Different endpoints have different role requirements. The API supports these roles:\n      - admin: Full access to all endpoints\n      - consultant: Access to consultant-specific features\n      - client: Access to client-specific features\n    ",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Authentication endpoints for registration and login"
+    },
+    {
+      "name": "users",
+      "description": "User management endpoints"
+    },
+    {
+      "name": "consultants",
+      "description": "Consultant profile and availability management"
+    },
+    {
+      "name": "clients",
+      "description": "Client profile management"
+    },
+    {
+      "name": "sessions",
+      "description": "Session scheduling and management"
+    },
+    {
+      "name": "reviews",
+      "description": "Consultant reviews and ratings"
+    },
+    {
+      "name": "messaging",
+      "description": "Messaging integration with external platforms"
+    },
+    {
+      "name": "admin",
+      "description": "Admin dashboard and management features"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "Authorization",
+        "description": "Enter JWT token",
+        "in": "header"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "consultant",
+              "client"
+            ],
+            "default": "client"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fullName",
+          "email",
+          "password",
+          "role"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User full name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "consultant",
+              "client"
+            ],
+            "default": "client"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "profileImage": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "fullName",
+          "role"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 6
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "profileImage": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Status of the operation",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Operation successful"
+          },
+          "data": {
+            "type": "object",
+            "description": "Response data",
+            "example": {}
+          },
+          "error": {
+            "type": "string",
+            "description": "Error description if any",
+            "example": null
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "data",
+          "error"
+        ]
+      },
+      "Availability": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Start time of availability"
+          },
+          "endTime": {
+            "format": "date-time",
+            "type": "string",
+            "description": "End time of availability"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "startTime",
+          "endTime",
+          "isAvailable"
+        ]
+      },
+      "CreateAvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "consultantId": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "Start time of availability"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "End time of availability"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "consultantId",
+          "startTime",
+          "endTime",
+          "isAvailable"
+        ]
+      },
+      "UpdateAvailabilityDto": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "isAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "Consultant": {
+        "type": "object",
+        "properties": {
+          "specialties": {
+            "description": "Consultant specialties",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bio": {
+            "type": "string",
+            "description": "Consultant biography"
+          },
+          "education": {
+            "type": "string",
+            "description": "Education and qualifications"
+          },
+          "rating": {
+            "type": "number",
+            "default": 0
+          },
+          "reviewCount": {
+            "type": "number",
+            "default": 0
+          },
+          "isVerified": {
+            "type": "boolean",
+            "default": false
+          },
+          "consultantLicense": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "specialties",
+          "bio",
+          "education",
+          "rating",
+          "reviewCount",
+          "isVerified"
+        ]
+      },
+      "CreateConsultantDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "specialties": {
+            "description": "List of specialties",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bio": {
+            "type": "string",
+            "description": "Consultant biography"
+          },
+          "education": {
+            "type": "string",
+            "description": "Education and qualifications"
+          },
+          "consultantLicense": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "specialties",
+          "bio",
+          "education"
+        ]
+      },
+      "UpdateConsultantDto": {
+        "type": "object",
+        "properties": {
+          "specialties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bio": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "consultantLicense": {
+            "type": "string"
+          }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateClientDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId"
+        ]
+      },
+      "UpdateClientDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "SessionStatus": {
+        "type": "string",
+        "description": "Current status of the session",
+        "default": "pending",
+        "enum": [
+          "pending",
+          "confirmed",
+          "completed",
+          "cancelled"
+        ]
+      },
+      "Session": {
+        "type": "object",
+        "properties": {
+          "consultant": {
+            "description": "The consultant providing the session",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Consultant"
+              }
+            ]
+          },
+          "client": {
+            "description": "The client receiving the session",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Client"
+              }
+            ]
+          },
+          "date": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Session date and time",
+            "example": "2025-04-15T14:00:00Z"
+          },
+          "status": {
+            "example": "confirmed",
+            "$ref": "#/components/schemas/SessionStatus"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Session notes or summary",
+            "example": "Client had concerns about parenting strategies. Discussed positive reinforcement techniques."
+          },
+          "messengerId": {
+            "type": "string",
+            "description": "External messenger identifier (e.g., Telegram chat ID)",
+            "example": "12345678"
+          },
+          "messengerType": {
+            "type": "string",
+            "description": "Type of messenger used for communication",
+            "example": "telegram",
+            "enum": [
+              "telegram",
+              "whatsapp"
+            ]
+          }
+        },
+        "required": [
+          "consultant",
+          "client",
+          "date",
+          "status"
+        ]
+      },
+      "CreateSessionDto": {
+        "type": "object",
+        "properties": {
+          "consultantId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "description": "Session date and time"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "messengerId": {
+            "type": "string",
+            "description": "Messenger identifier (e.g., Telegram chat ID)"
+          },
+          "messengerType": {
+            "type": "string",
+            "description": "Type of messenger (e.g., telegram, whatsapp)"
+          }
+        },
+        "required": [
+          "consultantId",
+          "clientId",
+          "date"
+        ]
+      },
+      "UpdateSessionDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "messengerId": {
+            "type": "string"
+          },
+          "messengerType": {
+            "type": "string"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "number",
+            "description": "Rating from 1 to 5",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Review comment"
+          }
+        },
+        "required": [
+          "rating",
+          "comment"
+        ]
+      },
+      "CreateReviewDto": {
+        "type": "object",
+        "properties": {
+          "consultantId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number",
+            "description": "Rating from 1 to 5",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "type": "string",
+            "description": "Review comment"
+          }
+        },
+        "required": [
+          "consultantId",
+          "clientId",
+          "sessionId",
+          "rating",
+          "comment"
+        ]
+      },
+      "SendMessageDto": {
+        "type": "object",
+        "properties": {
+          "recipientId": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "messengerType": {
+            "type": "string",
+            "enum": [
+              "telegram",
+              "whatsapp"
+            ]
+          },
+          "sessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "recipientId",
+          "text",
+          "messengerType"
+        ]
+      },
+      "DashboardStatsDto": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "number"
+          },
+          "totalConsultants": {
+            "type": "number"
+          },
+          "totalClients": {
+            "type": "number"
+          },
+          "totalSessions": {
+            "type": "number"
+          },
+          "pendingSessions": {
+            "type": "number"
+          },
+          "completedSessions": {
+            "type": "number"
+          },
+          "totalReviews": {
+            "type": "number"
+          },
+          "averageRating": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "totalUsers",
+          "totalConsultants",
+          "totalClients",
+          "totalSessions",
+          "pendingSessions",
+          "completedSessions",
+          "totalReviews",
+          "averageRating"
+        ]
+      }
+    }
+  }
+}
